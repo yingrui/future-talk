@@ -2,7 +2,7 @@ package future.talk
 
 import akka.actor.Actor
 
-class FutureTalk extends Actor with DialogIndexService {
+class FutureTalk extends Actor with DialogResource {
 
   def actorRefFactory = context
 
