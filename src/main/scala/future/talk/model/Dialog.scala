@@ -21,6 +21,10 @@ object Talk {
 
 object Dialog {
 
+  def toUri(id: Int) {
+    spray.http.Uri(s"${FutureTalkSettings.rootPath}/dialogs/${id}")
+  }
+
   implicit class RichDialog(dialog: Dialog) {
 
     def toUri = spray.http.Uri(s"${FutureTalkSettings.rootPath}/dialogs/${dialog.id}")

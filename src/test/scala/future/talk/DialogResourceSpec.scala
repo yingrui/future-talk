@@ -1,10 +1,11 @@
-import future.talk.DialogResource
-import future.talk.model.dto.{TalkDto, DialogDto}
+package future.talk
+
+import future.talk.model.dto.DialogDto
 import org.specs2.mutable._
 import spray.http.HttpHeaders.Location
 import spray.http.MediaTypes.`application/json`
 import spray.http.HttpCharsets.`UTF-8`
-import spray.http.{Uri, StatusCodes, ContentType, HttpEntity}
+import spray.http.{StatusCodes, ContentType, HttpEntity}
 import spray.json.JsonParser
 import spray.testkit._
 import future.talk.CustomJsonProtocol._
