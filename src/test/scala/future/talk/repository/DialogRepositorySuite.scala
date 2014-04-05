@@ -5,6 +5,7 @@ import org.scalatest.prop._
 import org.scalacheck.Prop._
 import org.scalacheck.Gen
 import future.talk.model.{Dialog, Talk}
+import future.talk.util.Guid
 
 class DialogRepositorySuite extends FunSuite with Checkers {
 
@@ -16,7 +17,7 @@ class DialogRepositorySuite extends FunSuite with Checkers {
       topic <- Gen.alphaStr
       talks <- Gen.listOf1(talkGen)
     } yield (topic, talks)
-    gen.flatMap[Dialog](t => Dialog(t._1, Some(t._2)))
+    gen.flatMap[Dialog](t => Dialog(t._1, Some(t._2), Guid.newId))
   }
 
   test("should save dialog into search engine") {
@@ -28,7 +29,6 @@ class DialogRepositorySuite extends FunSuite with Checkers {
           case Some(savedDialog) => savedDialog.topic == dialog.topic
           case _ => false
         }
-
     })
   }
 }

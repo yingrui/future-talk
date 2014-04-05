@@ -12,6 +12,7 @@ libraryDependencies ++= Seq(
   "ch.qos.logback" % "logback-classic" % "1.0.13",
   "org.apache.lucene" % "lucene-core" % "4.6.1",
   "org.apache.lucene" % "lucene-analyzers-common" % "4.6.1",
+  "org.apache.lucene" % "lucene-queryparser" % "4.6.1",
   "io.spray" % "spray-can" % "1.2.0",
   "io.spray" % "spray-routing" % "1.2.0",
   "io.spray" %% "spray-json" % "1.2.5",

@@ -1,12 +1,18 @@
 package future.talk.model
 
 import future.talk.FutureTalkSettings
-import future.talk.model.dto.{TalkDto, DialogDto}
 import future.talk.CustomImplicitConverter._
+import future.talk.util.Guid
+import future.talk.util.Date._
+import java.util.UUID
+import org.apache.lucene.document._
+import future.talk.model.dto.TalkDto
+import future.talk.model.dto.DialogDto
+import scala.Some
 
-case class Talk(content: String, person: String, time: String, id: Int = 0)
+case class Talk(content: String, person: String, time: String, id: UUID = Guid.empty)
 
-case class Dialog(topic: String, talks: Option[List[Talk]], id: Int = 0)
+case class Dialog(topic: String, talks: Option[List[Talk]], id: UUID = Guid.empty)
 
 object Talk {
 
@@ -15,6 +21,15 @@ object Talk {
     def toUri = spray.http.Uri(s"${FutureTalkSettings.rootPath}/talks/${talk.id}")
 
     def toDto = TalkDto(talk.content, talk.person, talk.time, talk.toUri)
+
+    def toDocument = {
+      val doc = new Document
+      doc.add(new StringField("id", talk.id.toString, Field.Store.YES))
+      doc.add(new StringField("person", talk.person, Field.Store.YES))
+      doc.add(new LongField("time", talk.time.toTicks, Field.Store.YES))
+      doc.add(new TextField("content", talk.content, Field.Store.YES))
+      doc
+    }
   }
 
 }
@@ -38,6 +53,12 @@ object Dialog {
       dialog.toUri
     )
 
+    def toDocument = {
+      val doc = new Document
+      doc.add(new StringField("id", dialog.id.toString, Field.Store.YES))
+      doc.add(new TextField("topic", dialog.topic, Field.Store.YES))
+      doc
+    }
   }
 
 }

@@ -13,7 +13,7 @@ import future.talk.CustomJsonProtocol._
 class DialogResourceSpec extends Specification with Specs2RouteTest with DialogResource {
   def actorRefFactory = system
 
-  val jsonTalks = """[{"content":"Hi", "person": "Rob", "time":"2014/01/01 00:00:00"}]"""
+  val jsonTalks = """[{"content":"Hi", "person": "Rob", "time":"2014-01-01T00:00:00"}]"""
   val jsonDialog = s"""{"topic":"greeting", "talks": $jsonTalks}"""
 
   "The Dialog Resource" should {
@@ -40,7 +40,7 @@ class DialogResourceSpec extends Specification with Specs2RouteTest with DialogR
               val talk = talks(0)
               talk.content === "Hi"
               talk.person === "Rob"
-              talk.time === "2014/01/01 00:00:00"
+              talk.time === "2014-01-01T00:00:00"
             }
             case None => failure("should return talks")
           }

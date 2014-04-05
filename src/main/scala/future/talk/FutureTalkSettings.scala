@@ -9,6 +9,7 @@ object FutureTalkSettings {
   var schema = "http"
   var host = "localhost"
   var port = 8080
+  var dataPath = "data"
 
   def rootPath = s"${schema}://${host}:${port}"
 }

@@ -5,6 +5,8 @@ import future.talk.model._
 import future.talk.model.requests._
 import spray.http.StatusCodes
 import spray.http.HttpHeaders.Location
+import future.talk.util.Guid
+import future.talk.repository.DialogRepository
 
 
 trait DialogResource extends HttpService {
@@ -26,8 +28,11 @@ trait DialogResource extends HttpService {
       }
     } ~
     get {
-      pathPrefix("dialogs" / IntNumber) { id =>
-        complete(Dialog("greeting", Some(List(Talk("Hi", "Rob", "2014/01/01 00:00:00", 1))), id).toDto)
+      pathPrefix("dialogs" / JavaUUID) { id =>
+        new DialogRepository().getById(id) match {
+          case Some(dialog) => complete(dialog.toDto)
+          case None => complete(StatusCodes.NotFound)
+        }
       }
     }
   }
@@ -43,6 +48,6 @@ trait DialogResource extends HttpService {
   }
 
   def create(topic: String, talks: List[TalkRequest]): Dialog = {
-    Dialog(topic, Some(talks.map(t => Talk(t.content, t.person, t.time, 1))), 1)
+    new DialogRepository().create(Dialog(topic, Some(talks.map(t => Talk(t.content, t.person, t.time, Guid.newId))), Guid.newId))
   }
 }
