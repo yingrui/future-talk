@@ -10,4 +10,5 @@ object Date {
     def toTicks = dateStr.toDate.get.clicks
   }
 
+  def fromLong(ticks: Long): String = DateTime(ticks).toIsoDateTimeString
 }
