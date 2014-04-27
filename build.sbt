@@ -7,6 +7,7 @@ scalaVersion := "2.10.3"
 
 libraryDependencies ++= Seq(
   "org.scala-lang" % "scala-reflect" % "2.10.3",
+  "org.scala-lang.modules" %% "scala-async" % "0.9.0-M2",
   "com.typesafe.akka" %% "akka-actor" % "2.2.3",
   "com.typesafe.akka" %% "akka-slf4j" % "2.2.3",
   "ch.qos.logback" % "logback-classic" % "1.0.13",
