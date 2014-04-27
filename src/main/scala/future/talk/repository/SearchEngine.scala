@@ -17,43 +17,44 @@ object SearchEngine {
   private val version = Version.LUCENE_46
   private val analyzer = new MPSegmentAnalyzer
   private val dir = FSDirectory.open(new File(FutureTalkSettings.dataPath))
-  private var retireIndexSearcher = false
+  private val indexWriter = createIndexWriter
 
   def index(document: Document): Unit = {
     indexWriter addDocument document
     indexWriter.commit
-    retireIndexSearcher = true
   }
 
   def get(id: UUID): Option[Document] = {
     val query = new TermQuery(new Term("id", id.toString))
-    val result = searcher.search(query, 1)
-    if (result.totalHits > 0) {
-      Some(searcher.doc(result.scoreDocs(0).doc))
-    } else {
-      None
+    val searcher = getSearcher
+    try {
+      val result = searcher.search(query, 1)
+      if (result.totalHits > 0) {
+        Some(searcher.doc(result.scoreDocs(0).doc))
+      } else {
+        None
+      }
+    } finally {
+      searcher.getIndexReader.close()
     }
   }
 
   def search(query: Query): Option[List[Document]] = {
-    val result = searcher.search(query, 1000)
-    if (result.totalHits > 0) {
-      Some(result.scoreDocs.map(_.doc)
-        .map(docId => searcher.doc(docId)).toList)
-    } else {
-      None
+    val searcherInstance = getSearcher
+    try {
+      val result = searcherInstance.search(query, 1000)
+      if (result.totalHits > 0) {
+        Some(result.scoreDocs.map(_.doc)
+          .map(docId => searcherInstance.doc(docId)).toList)
+      } else {
+        None
+      }
+    } finally {
+      searcherInstance.getIndexReader.close()
     }
   }
 
-  private var _searcher = new IndexSearcher(DirectoryReader.open(dir))
-  private def searcher = {
-    if(retireIndexSearcher) {
-      _searcher.getIndexReader.close()
-      _searcher = new IndexSearcher(DirectoryReader.open(dir))
-      retireIndexSearcher = true
-    }
-    _searcher
-  }
+  private def getSearcher = new IndexSearcher(DirectoryReader.open(dir))
 
   private def createIndexWriter = {
     val indexWriterConfig = new IndexWriterConfig(version, analyzer)
@@ -61,7 +62,5 @@ object SearchEngine {
 
     new IndexWriter(dir, indexWriterConfig)
   }
-
-  private lazy val indexWriter = createIndexWriter
 
 }
