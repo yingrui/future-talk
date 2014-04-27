@@ -8,7 +8,7 @@ import future.talk.FutureTalkSettings
 import org.apache.lucene.util.Version
 import websiteschema.mpsegment.lucene.MPSegmentAnalyzer
 import org.apache.lucene.document.Document
-import org.apache.lucene.search.{Query, TermQuery, IndexSearcher}
+import org.apache.lucene.search.{TopDocs, Query, TermQuery, IndexSearcher}
 import java.util.UUID
 import scala.Some
 
@@ -26,31 +26,29 @@ object SearchEngine {
 
   def get(id: UUID): Option[Document] = {
     val query = new TermQuery(new Term("id", id.toString))
+    search[Document](query) {
+      (result, searcher) => searcher.doc(result.scoreDocs(0).doc)
+    }
+  }
+
+  def search(query: Query): Option[List[Document]] = {
+    search[List[Document]](query) {
+      (result, searcher) => result.scoreDocs.map(_.doc)
+        .map(docId => searcher.doc(docId)).toList
+    }
+  }
+
+  def search[T](query: Query)(toResult: (TopDocs, IndexSearcher) => T): Option[T] = {
     val searcher = getSearcher
     try {
-      val result = searcher.search(query, 1)
+      val result = searcher.search(query, 1000)
       if (result.totalHits > 0) {
-        Some(searcher.doc(result.scoreDocs(0).doc))
+        Some(toResult(result, searcher))
       } else {
         None
       }
     } finally {
       searcher.getIndexReader.close()
-    }
-  }
-
-  def search(query: Query): Option[List[Document]] = {
-    val searcherInstance = getSearcher
-    try {
-      val result = searcherInstance.search(query, 1000)
-      if (result.totalHits > 0) {
-        Some(result.scoreDocs.map(_.doc)
-          .map(docId => searcherInstance.doc(docId)).toList)
-      } else {
-        None
-      }
-    } finally {
-      searcherInstance.getIndexReader.close()
     }
   }
 
