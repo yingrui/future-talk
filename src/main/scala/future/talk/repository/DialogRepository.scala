@@ -18,7 +18,6 @@ class DialogRepository {
     dialog
   }
 
-
   def getById(id: UUID): Option[Dialog] = {
     SearchEngine.get(id) match {
       case Some(doc) => Some(Dialog(doc.get("topic"), getTalks(id), UUID.fromString(doc.get("id"))))

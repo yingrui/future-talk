@@ -4,19 +4,22 @@ import org.scalatest.FunSuiteLike
 import org.scalatest.prop._
 import org.scalacheck.Prop._
 import future.talk.model.{Dialog, Talk}
+import akka.actor.{Props, ActorSystem}
+import akka.testkit.{ImplicitSender, TestKit}
 import future.talk.data.DialogGenerator._
+import scala.Some
 
-class DialogRepositorySuite extends FunSuiteLike with Checkers {
+class DialogRepositoryActorSuite(_system: ActorSystem) extends TestKit(_system) with FunSuiteLike with Checkers with ImplicitSender {
+
+  def this() = this(ActorSystem("DialogRepositorySuite"))
 
   test("should save dialog into search engine") {
-    val repository = new DialogRepository()
-    check(forAll(dialogGen){
+    val repository = system.actorOf(Props[DialogRepositoryActor])
+    check(forAll(dialogGen) {
       dialog =>
-        val id = repository.create(dialog).id
-        repository.getById(id) match {
-          case Some(savedDialog) => verifyDialog(savedDialog, dialog)
-          case _ => false
-        }
+        repository ! CREATE(dialog)
+        expectMsg(CREATED(dialog.id))
+        true
     })
   }
 
