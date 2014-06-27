@@ -6,10 +6,19 @@ import future.talk.model.requests._
 import spray.http.StatusCodes
 import spray.http.HttpHeaders.Location
 import future.talk.util.Guid
-import future.talk.repository.DialogRepository
+import future.talk.repository.{DialogRepositoryActor, DialogRepository}
+import spray.routing.Route
+import future.talk.service.RequestHandler._
+import akka.actor.Props
+import future.talk.service.DialogService
 
+trait BaseResource {
+  def handleRequest(message: RequestMessage): Route
+}
 
-trait DialogResource extends HttpService {
+trait DialogResource extends HttpService with BaseResource {
+
+  implicit def executionContext = actorRefFactory.dispatcher
 
   import spray.httpx.SprayJsonSupport._
   import CustomJsonProtocol._
@@ -50,4 +59,7 @@ trait DialogResource extends HttpService {
   def create(topic: String, talks: List[TalkRequest]): Dialog = {
     new DialogRepository().create(Dialog(topic, Some(talks.map(t => Talk(t.content, t.person, t.time, Guid.newId))), Guid.newId))
   }
+
+  def handleRequest(message: RequestMessage): Route =
+    ctx => process(actorRefFactory, ctx, Props[DialogRepositoryActor], message)
 }

@@ -15,7 +15,6 @@ import scala.Some
 object SearchEngine {
 
   private val version = Version.LUCENE_46
-  private val analyzer = new MPSegmentAnalyzer
   private val dir = FSDirectory.open(new File(FutureTalkSettings.dataPath))
   private val indexWriter = createIndexWriter
 
@@ -55,7 +54,7 @@ object SearchEngine {
   private def getSearcher = new IndexSearcher(DirectoryReader.open(dir))
 
   private def createIndexWriter = {
-    val indexWriterConfig = new IndexWriterConfig(version, analyzer)
+    val indexWriterConfig = new IndexWriterConfig(version, new MPSegmentAnalyzer)
     indexWriterConfig.setOpenMode(OpenMode.CREATE_OR_APPEND)
 
     new IndexWriter(dir, indexWriterConfig)

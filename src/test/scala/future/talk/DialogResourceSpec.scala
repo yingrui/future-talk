@@ -1,6 +1,5 @@
 package future.talk
 
-import future.talk.model.dto.DialogDto
 import org.specs2.mutable._
 import spray.http.HttpHeaders.Location
 import spray.http.MediaTypes.`application/json`
@@ -9,6 +8,10 @@ import spray.http.{StatusCodes, ContentType, HttpEntity}
 import spray.json.JsonParser
 import spray.testkit._
 import future.talk.CustomJsonProtocol._
+import future.talk.model.requests.RequestMessage
+import spray.routing._
+import future.talk.model.dto.DialogDto
+import scala.Some
 
 class DialogResourceSpec extends Specification with Specs2RouteTest with DialogResource {
   def actorRefFactory = system
