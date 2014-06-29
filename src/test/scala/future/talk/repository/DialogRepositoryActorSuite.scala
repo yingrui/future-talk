@@ -1,14 +1,14 @@
 package future.talk.repository
 
-import org.scalatest.FunSuiteLike
-import org.scalatest.prop._
-import org.scalacheck.Prop._
-import future.talk.model.{Dialog, Talk}
-import akka.actor.{Props, ActorSystem}
+import akka.actor.{ActorSystem, Props}
 import akka.testkit.{ImplicitSender, TestKit}
 import future.talk.data.DialogGenerator._
-import scala.Some
-import future.talk.model.requests.{TalkRequest, DialogCreateRequest}
+import future.talk.model.requests.{DialogCreateRequest, TalkRequest}
+import future.talk.model.{Dialog, Talk}
+import org.scalacheck.Prop._
+import org.scalatest.FunSuiteLike
+import org.scalatest.prop._
+
 import scala.concurrent.duration._
 
 class DialogRepositoryActorSuite(_system: ActorSystem) extends TestKit(_system) with FunSuiteLike with Checkers with ImplicitSender {
@@ -20,7 +20,7 @@ class DialogRepositoryActorSuite(_system: ActorSystem) extends TestKit(_system) 
     check(forAll(dialogGen) {
       dialog =>
         repository ! DialogCreateRequest(dialog.topic, dialog.talks.map(l => l.map(t=> TalkRequest(t.content, t.person, t.time))))
-        expectMsgPF(2 seconds, "") {
+        expectMsgPF(1 minutes) {
           case CREATED(actual) => verifyDialog(dialog, actual)
           case _ => false
         }

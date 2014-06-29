@@ -1,22 +1,13 @@
 package future.talk
 
-import spray.routing.HttpService
-import future.talk.model._
 import future.talk.model.requests._
-import spray.http.StatusCodes
-import spray.http.HttpHeaders.Location
-import future.talk.util.Guid
-import future.talk.repository.{DialogRepositoryActor, DialogRepository}
-import spray.routing.Route
+import future.talk.repository.{DialogRepository, DialogRepositoryActor}
 import future.talk.service.RequestHandler._
-import akka.actor.Props
-import future.talk.service.DialogService
+import future.talk.util.SingletonActorDictionary
+import spray.http.StatusCodes
+import spray.routing.{HttpService, Route}
 
-trait BaseResource {
-  def handleRequest(message: RequestMessage): Route
-}
-
-trait DialogResource extends HttpService with BaseResource {
+trait DialogResource extends HttpService {
 
   implicit def executionContext = actorRefFactory.dispatcher
 
@@ -27,12 +18,7 @@ trait DialogResource extends HttpService with BaseResource {
     path("dialogs") {
       post {
         entity(as[DialogCreateRequest]) {
-          request => createDialog(request) match {
-            case Some(location: Location) => respondWithHeader(location) {
-              complete(StatusCodes.Created)
-            }
-            case _ => complete(StatusCodes.BadRequest)
-          }
+          handleRequest(_)
         }
       }
     } ~
@@ -46,20 +32,10 @@ trait DialogResource extends HttpService with BaseResource {
     }
   }
 
-  def createDialog(request: DialogCreateRequest): Option[Location] = {
-    request match {
-      case DialogCreateRequest(topic, Some(talks)) => {
-        val dialog = create(topic, talks)
-        Some(Location(dialog.toUri))
-      }
-      case _ => None
-    }
-  }
-
-  def create(topic: String, talks: List[TalkRequest]): Dialog = {
-    new DialogRepository().create(Dialog(topic, Some(talks.map(t => Talk(t.content, t.person, t.time, Guid.newId))), Guid.newId))
-  }
-
   def handleRequest(message: RequestMessage): Route =
-    ctx => process(actorRefFactory, ctx, Props[DialogRepositoryActor], message)
+    ctx => process(
+              actorRefFactory,
+              ctx,
+              SingletonActorDictionary(classOf[DialogRepositoryActor]),
+              message)
 }

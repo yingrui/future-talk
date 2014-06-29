@@ -1,20 +1,29 @@
 package future.talk
 
+import java.util.concurrent.TimeUnit
+
+import akka.actor.Props
+import future.talk.CustomJsonProtocol._
+import future.talk.model.dto.DialogDto
+import future.talk.repository.DialogRepositoryActor
+import future.talk.util.SingletonActorDictionary
+import future.talk.util.SingletonActorDictionary._
 import org.specs2.mutable._
+import spray.http.HttpCharsets.`UTF-8`
 import spray.http.HttpHeaders.Location
 import spray.http.MediaTypes.`application/json`
-import spray.http.HttpCharsets.`UTF-8`
-import spray.http.{StatusCodes, ContentType, HttpEntity}
+import spray.http.{ContentType, HttpEntity, StatusCodes}
 import spray.json.JsonParser
 import spray.testkit._
-import future.talk.CustomJsonProtocol._
-import future.talk.model.requests.RequestMessage
-import spray.routing._
-import future.talk.model.dto.DialogDto
-import scala.Some
+
+import scala.concurrent.duration._
 
 class DialogResourceSpec extends Specification with Specs2RouteTest with DialogResource {
   def actorRefFactory = system
+
+  SingletonActorDictionary(classOf[DialogRepositoryActor]) = actorRefFactory.actorOf(Props[DialogRepositoryActor]).path.toString
+
+  implicit val timeout = RouteTestTimeout(FiniteDuration(1, TimeUnit.MINUTES))
 
   val jsonTalks = """[{"content":"Hi", "person": "Rob", "time":"2014-01-01T00:00:00"}]"""
   val jsonDialog = s"""{"topic":"greeting", "talks": $jsonTalks}"""
