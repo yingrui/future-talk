@@ -7,7 +7,6 @@ import future.talk.CustomJsonProtocol._
 import future.talk.model.dto.DialogDto
 import future.talk.repository.DialogRepositoryActor
 import future.talk.util.SingletonActorDictionary
-import future.talk.util.SingletonActorDictionary._
 import org.specs2.mutable._
 import spray.http.HttpCharsets.`UTF-8`
 import spray.http.HttpHeaders.Location

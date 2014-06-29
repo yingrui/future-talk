@@ -10,7 +10,6 @@ import websiteschema.mpsegment.lucene.MPSegmentAnalyzer
 import org.apache.lucene.document.Document
 import org.apache.lucene.search.{TopDocs, Query, TermQuery, IndexSearcher}
 import java.util.UUID
-import scala.Some
 
 object SearchEngine {
 
