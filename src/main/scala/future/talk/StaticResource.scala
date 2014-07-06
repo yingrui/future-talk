@@ -8,6 +8,9 @@ trait StaticResource extends HttpService {
   val staticRoute = {
     pathSingleSlash {
       getFromResource("index.htm")
+    } ~
+    pathPrefix("css") {
+      getFromResourceDirectory("css")
     }
   }
 

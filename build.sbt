@@ -37,3 +37,6 @@ scalacOptions ++= Seq(
 )
 
 testOptions += Tests.Argument(TestFrameworks.JUnit, "-v")
+
+seq(lessSettings:_*)
+
