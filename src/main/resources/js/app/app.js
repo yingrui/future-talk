@@ -1,6 +1,7 @@
+(function(global){
 'use strict';
 
-angular.module('future-talk', []).
+global.futureTalkCoreModule = angular.module('future-talk', []).
     config(['$routeProvider', function ($routeProvider) {
     $routeProvider.
         when('/', {
@@ -8,3 +9,5 @@ angular.module('future-talk', []).
             }).
         otherwise({redirectTo:'/'});
 }]);
+
+})(window);

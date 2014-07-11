@@ -1,0 +1,73 @@
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+        "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+    <title>Jasmine Spec Runner: Jasmine Core</title>
+    <meta http-equiv="content-type" content="text/html;charset=utf-8">
+
+    <link rel="shortcut icon" type="image/png" href="lib/jasmine-core/jasmine_favicon.png">
+
+    <link href="lib/jasmine-core/jasmine.css" rel="stylesheet"/>
+    <script type="text/javascript" src="lib/jasmine-core/jasmine.js"></script>
+    <script type="text/javascript">
+        // yes, really keep this here to keep us honest, but only for jasmine's own runner! [xw]
+        undefined = "diz be undefined yo";
+    </script>
+
+    <!-- include source files here... -->
+    <script type="text/javascript" src="lib/jasmine/html/HtmlReporterHelpers.js"></script>
+    <script type="text/javascript" src="lib/jasmine/html/HtmlReporter.js"></script>
+    <script type="text/javascript" src="lib/jasmine/html/HtmlReporterHelpers.js"></script>
+    <script type="text/javascript" src="lib/jasmine/html/ReporterView.js"></script>
+    <script type="text/javascript" src="lib/jasmine/html/SpecView.js"></script>
+    <script type="text/javascript" src="lib/jasmine/html/SuiteView.js"></script>
+    <script type="text/javascript" src="lib/jasmine/html/TrivialReporter.js"></script>
+    <script type="text/javascript" src="lib/jasmine/console/ConsoleReporter.js"></script>
+
+    <!-- include project source files here... -->
+    <script type="text/javascript" src="../js/angular.min.js"></script>
+    <script type="text/javascript" src="../js/app/app.js"></script>
+    <script type="text/javascript" src="../js/app/dialog-controller.js"></script>
+
+    <!-- include angular mocks files here... -->
+    <script type="text/javascript" src="lib/angular/angular-mocks.js"></script>
+
+    <!-- include spec files here... -->
+    <script type="text/javascript" src="dialog-controller-spec.js"></script>
+
+    <script type="text/javascript">
+        (function() {
+            var jasmineEnv = jasmine.getEnv();
+            jasmineEnv.updateInterval = 1000;
+
+            var htmlReporter = new jasmine.HtmlReporter();
+
+            jasmineEnv.addReporter(htmlReporter);
+
+            jasmineEnv.specFilter = function(spec) {
+                return htmlReporter.specFilter(spec);
+            };
+
+            var currentWindowOnload = window.onload;
+
+            window.onload = function() {
+                if (currentWindowOnload) {
+                    currentWindowOnload();
+                }
+                angular.bootstrap();
+                execJasmine();
+            };
+
+            function execJasmine() {
+                jasmineEnv.execute();
+            }
+
+        })();
+    </script>
+
+</head>
+
+<body>
+</body>
+</html>
