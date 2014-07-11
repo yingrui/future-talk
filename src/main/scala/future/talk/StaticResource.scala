@@ -14,7 +14,7 @@ trait StaticResource extends HttpService {
       getFromFile(s"$dir/index.htm")
     } ~
     pathPrefix("css") {
-      getFromResourceDirectory("css")
+      getFromDirectory(s"$dir/css")
     } ~
     pathPrefix("js") {
       getFromDirectory(s"$dir/js")

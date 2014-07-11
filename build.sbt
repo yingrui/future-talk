@@ -40,3 +40,4 @@ testOptions += Tests.Argument(TestFrameworks.JUnit, "-v")
 
 seq(lessSettings:_*)
 
+//(resourceManaged in (Compile, LessKeys.less)) <<= (crossTarget in Compile)(_ / "css" / "less")
