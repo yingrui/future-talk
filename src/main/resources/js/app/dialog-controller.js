@@ -5,7 +5,7 @@
         scope.dialog = {
             talks:[]
         };
-
+        scope.welcome = "Hello! Talk to me :-)";
         scope.talk = "";
 
         scope.speak = function(){
@@ -13,6 +13,7 @@
                 scope.dialog.talks.push(scope.talk);
                 scope.talk = "";
             }
+            scope.welcome = "";
         };
 
     }]);
