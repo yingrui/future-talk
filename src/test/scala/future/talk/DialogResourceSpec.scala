@@ -6,7 +6,7 @@ import akka.actor.Props
 import future.talk.CustomJsonProtocol._
 import future.talk.model.dto.DialogDto
 import future.talk.repository.DialogRepositoryActor
-import future.talk.util.SingletonActorDictionary
+import future.talk.util.MyActors
 import org.specs2.mutable._
 import spray.http.HttpCharsets.`UTF-8`
 import spray.http.HttpHeaders.Location
@@ -19,8 +19,6 @@ import scala.concurrent.duration._
 
 class DialogResourceSpec extends Specification with Specs2RouteTest with DialogResource {
   def actorRefFactory = system
-
-  SingletonActorDictionary(classOf[DialogRepositoryActor]) = actorRefFactory.actorOf(Props[DialogRepositoryActor]).path.toString
 
   implicit val timeout = RouteTestTimeout(FiniteDuration(1, TimeUnit.MINUTES))
 

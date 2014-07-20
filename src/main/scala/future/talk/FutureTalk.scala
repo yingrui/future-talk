@@ -1,14 +1,10 @@
 package future.talk
 
-import akka.actor.{Actor, Props}
-import future.talk.repository.DialogRepositoryActor
-import future.talk.util.SingletonActorDictionary
+import akka.actor.Actor
 
-class FutureTalk extends Actor with DialogResource with HealthCheckResource with StaticResource {
+class FutureTalk extends Actor with DialogResource with HealthCheckResource with StaticResource with IndexerResource {
 
   def actorRefFactory = context
 
-  SingletonActorDictionary(classOf[DialogRepositoryActor]) = actorRefFactory.actorOf(Props[DialogRepositoryActor]).path.toString
-
-  def receive = runRoute(indexRoute ~ healthCheckRoute ~ staticRoute)
+  def receive = runRoute(indexRoute ~ healthCheckRoute ~ staticRoute ~ indexerRoute)
 }

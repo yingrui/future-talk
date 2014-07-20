@@ -2,12 +2,13 @@ package future.talk
 
 import akka.actor._
 import akka.io.IO
+import future.talk.util.MyActors
 import spray.routing.SimpleRoutingApp
 import spray.can.Http
 
-
 object Main extends App with SimpleRoutingApp {
-  implicit val system = ActorSystem("future-talk-app")
+
+  import MyActors.system
 
   val service = system.actorOf(Props[FutureTalk], "future-talk-service")
 

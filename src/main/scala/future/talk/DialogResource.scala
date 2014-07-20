@@ -1,9 +1,9 @@
 package future.talk
 
 import future.talk.model.requests._
-import future.talk.repository.{DialogRepository, DialogRepositoryActor}
+import future.talk.repository.DialogRepository
 import future.talk.service.RequestHandler._
-import future.talk.util.SingletonActorDictionary
+import future.talk.util.MyActors
 import spray.http.StatusCodes
 import spray.routing.{HttpService, Route}
 
@@ -33,9 +33,6 @@ trait DialogResource extends HttpService {
   }
 
   def handleRequest(message: RequestMessage): Route =
-    ctx => process(
-              actorRefFactory,
-              ctx,
-              SingletonActorDictionary(classOf[DialogRepositoryActor]),
-              message)
+    ctx => process(actorRefFactory, ctx, MyActors.dialogReposityActor, message)
 }
+
