@@ -2,6 +2,8 @@ package future.talk.util
 
 import java.io.{PrintWriter, File}
 
+import scala.io.Source
+
 object FileUtil {
 
   implicit class RichFile(file: File) {
@@ -12,6 +14,8 @@ object FileUtil {
       writer.close()
       file
     }
+
+    def content = Source.fromFile(file).getLines().mkString("\n")
   }
 
   def createTempFile = {

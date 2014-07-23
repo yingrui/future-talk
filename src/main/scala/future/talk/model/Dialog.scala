@@ -8,11 +8,10 @@ import java.util.UUID
 import org.apache.lucene.document._
 import future.talk.model.dto.TalkDto
 import future.talk.model.dto.DialogDto
-import scala.Some
 
-case class Talk(content: String, person: String, time: String, id: UUID = Guid.empty)
+case class Talk(content: String, person: String, time: String, id: UUID)
 
-case class Dialog(topic: String, talks: Option[List[Talk]], id: UUID = Guid.empty)
+case class Dialog(topic: String, talks: Option[List[Talk]], id: UUID)
 
 object Talk {
 

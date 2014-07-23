@@ -22,8 +22,8 @@ object SearchEngine {
     indexWriter.commit
   }
 
-  def get(id: UUID): Option[Document] = {
-    val query = new TermQuery(new Term("id", id.toString))
+  def get(id: String): Option[Document] = {
+    val query = new TermQuery(new Term("id", id))
     getSearchResult[Document](query) {
       (result, searcher) => searcher.doc(result.scoreDocs(0).doc)
     }

@@ -1,8 +1,8 @@
 package future.talk
 
 import akka.actor.ActorSelection
-import future.talk.model.Indexer
 import future.talk.model.requests._
+import future.talk.service.Indexer
 import future.talk.service.RequestHandler._
 import spray.http.HttpHeaders.Location
 import spray.http.StatusCodes

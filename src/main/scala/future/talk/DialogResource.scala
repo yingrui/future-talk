@@ -6,6 +6,7 @@ import future.talk.service.RequestHandler._
 import future.talk.util.MyActors
 import spray.http.StatusCodes
 import spray.routing.{HttpService, Route}
+import future.talk.CustomImplicitConverter._
 
 trait DialogResource extends HttpService {
 

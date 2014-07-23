@@ -1,7 +1,7 @@
 package future.talk.repository
 
 import future.talk.model.{Talk, Dialog}
-import java.util.UUID
+import future.talk.CustomImplicitConverter._
 import org.apache.lucene.document.{Field, StringField}
 import org.apache.lucene.search.TermQuery
 import org.apache.lucene.index.Term
@@ -18,21 +18,21 @@ class DialogRepository {
     dialog
   }
 
-  def getById(id: UUID): Option[Dialog] = {
+  def getById(id: String): Option[Dialog] = {
     SearchEngine.get(id) match {
-      case Some(doc) => Some(Dialog(doc.get("topic"), getTalks(id), UUID.fromString(doc.get("id"))))
+      case Some(doc) => Some(Dialog(doc.get("topic"), getTalks(id), doc.get("id")))
       case None => None
     }
   }
 
-  private def getTalks(dialogId: UUID): Option[List[Talk]] = {
-    val query = new TermQuery(new Term("dialogId", dialogId.toString))
+  private def getTalks(dialogId: String): Option[List[Talk]] = {
+    val query = new TermQuery(new Term("dialogId", dialogId))
     SearchEngine.search(query) match {
       case Some(docs) => Some(docs.map(doc => {
         Talk(doc.get("content"),
           doc.get("person"),
           fromLong(doc.getField("time").numericValue().longValue()),
-          UUID.fromString(doc.get("id")))
+          doc.get("id"))
       }))
       case None => None
     }

@@ -5,6 +5,7 @@ import org.scalatest.prop._
 import org.scalacheck.Prop._
 import future.talk.model.{Dialog, Talk}
 import future.talk.data.DialogGenerator._
+import future.talk.CustomImplicitConverter._
 
 class DialogRepositorySuite extends FunSuiteLike with Checkers {
 
