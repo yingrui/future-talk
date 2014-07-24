@@ -8,6 +8,7 @@ import future.talk.FutureTalkSettings
 import future.talk.model.Dialog
 import future.talk.model.dto.DialogIndexer
 import future.talk.model.requests.GetStatus
+import future.talk.repository.CREATED
 import future.talk.util.{Guid, MyActors}
 import org.json4s._
 import org.json4s.native.JsonMethods._
@@ -16,10 +17,15 @@ import future.talk.MyJson4sFormat.formats
 class Indexer(val id: UUID, val files: List[String], val indexActor: ActorRef) extends Actor {
 
   var dialogs = loadDialogs
+  val totalDialogs = dialogs.size
+
   sendDialog
 
   def receive = {
     case GetStatus(_) => sender ! DialogIndexer(files, id.toString)
+    case CREATED(dialog) =>
+      dialogs = dialogs.tail
+      if(dialogs.isEmpty) context.stop(self) else sendDialog
     case _ =>
   }
 

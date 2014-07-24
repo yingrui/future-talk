@@ -1,9 +1,10 @@
 package future.talk.service
 
 import akka.actor.{ActorSystem, Props}
-import akka.testkit.{ImplicitSender, TestKit}
+import akka.testkit.{TestProbe, ImplicitSender, TestKit}
 import future.talk.MyJson4sFormat
 import future.talk.model.{Talk, Dialog}
+import future.talk.repository.CREATED
 import future.talk.util.{FileUtil, Guid, MyActors}
 import org.scalatest.{BeforeAndAfterAll, Matchers, WordSpecLike}
 import org.json4s.native.Serialization.write
@@ -14,17 +15,25 @@ class IndexerActorSuite(_system: ActorSystem) extends TestKit(_system) with Impl
 
   def this() = this(MyActors.system)
 
-  val dialog = Dialog("greeting", Some(List[Talk](Talk("Hi", "Rob", "2014-01-01T00:00:00", Guid("B883DAB4-72DF-4E25-9DD4-86C0638BAA70")))), Guid("34A39666-D5BD-42D7-AD3D-3D548337875D"))
+  val dialog1 = Dialog("greeting", Some(List[Talk](Talk("Hi", "Rob", "2014-01-01T00:00:00", Guid.newId))), Guid.newId)
+  val dialog2 = Dialog("asking", Some(List[Talk](Talk("Hi", "Rob", "2014-02-01T00:00:00", Guid.newId))), Guid.newId)
 
-  val file = FileUtil.createTempFile(write(List(dialog))).getAbsolutePath
+  val file = FileUtil.createTempFile(write(List(dialog1, dialog2))).getAbsolutePath
 
   "An Indexer Actor" should {
     "should parse index file and index dialogs" in {
       val files = List(file)
       val indexerId = Guid.newId
-      val indexerActor = _system.actorOf(Props(classOf[Indexer], indexerId, files, self))
+      val probe = TestProbe()
+      val indexActor = _system.actorOf(Props(classOf[Indexer], indexerId, files, probe.ref))
 
-      expectMsg(dialog)
+      probe.watch(indexActor)
+      probe.expectMsg(dialog1)
+      indexActor ! CREATED(dialog1)
+      probe.expectMsg(dialog2)
+      indexActor ! CREATED(dialog2)
+
+      probe.expectTerminated(indexActor)
     }
   }
 

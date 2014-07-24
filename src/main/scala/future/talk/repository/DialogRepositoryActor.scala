@@ -13,10 +13,13 @@ class DialogRepositoryActor extends Actor {
 
   def receive = {
     case DialogCreateRequest(topic: String, talks: Option[List[TalkRequest]]) =>
-      val dialog = Dialog(topic, talks.map(l => l.map(t => Talk(t.content, t.person, t.time, Guid.newId))), Guid.newId)
-      repository.create(dialog)
-      sender ! CREATED(dialog)
+      createDialog(Dialog(topic, talks.map(l => l.map(t => Talk(t.content, t.person, t.time, Guid.newId))), Guid.newId))
+    case dialog: Dialog => createDialog(dialog)
     case _ =>
   }
 
+  def createDialog(dialog: Dialog) {
+    repository.create(dialog)
+    sender ! CREATED(dialog)
+  }
 }
