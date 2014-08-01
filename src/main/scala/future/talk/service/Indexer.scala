@@ -25,7 +25,7 @@ class Indexer(val id: UUID, val files: List[String], val indexActor: ActorRef) e
     case GetStatus(_) => sender ! DialogIndexer(files, id.toString)
     case CREATED(dialog) =>
       dialogs = dialogs.tail
-      if(dialogs.isEmpty) context.stop(self) else sendDialog
+      sendDialog
     case _ =>
   }
 
@@ -34,8 +34,11 @@ class Indexer(val id: UUID, val files: List[String], val indexActor: ActorRef) e
     dialogLists.flatten
   }
 
-  def sendDialog {
-    indexActor ! dialogs.head
+  def sendDialog: Unit = {
+    if(dialogs.nonEmpty)
+      indexActor ! dialogs.head
+    else
+      context.stop(self)
   }
 }
 
@@ -49,7 +52,6 @@ object Indexer {
 
   def get(id: UUID) = {
     val path: ActorPath = MyActors.system / id.toString
-    println(s"get indexer: ${path.toString}")
     MyActors.system.actorSelection(path)
   }
 
