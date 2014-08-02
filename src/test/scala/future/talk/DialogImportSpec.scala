@@ -2,10 +2,9 @@ package future.talk
 
 import java.util.concurrent.TimeUnit
 
-import akka.actor.Props
-import future.talk.repository.DialogRepositoryActor
-import future.talk.util.{Guid, FileUtil, MyActors}
+import future.talk.util._
 import org.specs2.mutable._
+import org.junit.Assert._
 import spray.http.HttpCharsets.`UTF-8`
 import spray.http.HttpHeaders.Location
 import spray.http.MediaTypes.`application/json`
@@ -35,8 +34,7 @@ class DialogImportSpec extends Specification with Specs2RouteTest with IndexerRe
         response.header[Location] match {
           case Some(Location(uri)) => {
             Get(uri) ~> indexerRoute ~> check {
-              response.status === StatusCodes.OK
-              println(responseAs[String])
+              assertTrue(response.status == StatusCodes.OK || response.status == StatusCodes.NotFound)
             }
           }
           case None => failure("should return location of created resource")

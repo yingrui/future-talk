@@ -38,7 +38,6 @@ trait PerRequest extends Actor with Json4sSupport {
   }
 
   def initiate(target: ActorSelection) {
-
     target.resolveOne(1 minutes).andThen {
       case ref: ActorRef =>
         initiate(ref)
