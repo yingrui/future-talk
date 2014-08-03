@@ -1,11 +1,11 @@
 package future.talk
 
 import future.talk.model.requests._
-import future.talk.repository.DialogRepository
+import future.talk.repository.{DuplicateException, DialogRepository}
 import future.talk.service.RequestHandler._
 import future.talk.util.MyActors
 import spray.http.StatusCodes
-import spray.routing.{HttpService, Route}
+import spray.routing.{ExceptionHandler, HttpService, Route}
 import future.talk.CustomImplicitConverter._
 
 trait DialogResource extends HttpService {
@@ -15,11 +15,17 @@ trait DialogResource extends HttpService {
   import spray.httpx.SprayJsonSupport._
   import CustomJsonProtocol._
 
+  val resourceErrorHandler = ExceptionHandler {
+    case DuplicateException(dialogId) => complete(StatusCodes.BadRequest, s"The dialog ($dialogId) already exists!")
+  }
+
   val indexRoute = {
     path("dialogs") {
       post {
-        entity(as[DialogCreateRequest]) {
-          handleRequest(_)
+        handleExceptions(resourceErrorHandler) {
+          entity(as[DialogCreateRequest]) {
+            handleRequest(_)
+          }
         }
       }
     } ~

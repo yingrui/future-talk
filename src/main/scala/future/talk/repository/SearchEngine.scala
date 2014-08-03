@@ -11,6 +11,8 @@ import org.apache.lucene.document.Document
 import org.apache.lucene.search.{TopDocs, Query, TermQuery, IndexSearcher}
 import java.util.UUID
 
+import scala.util.{Try, Success, Failure}
+
 object SearchEngine {
 
   private val version = Version.LUCENE_46
@@ -42,20 +44,27 @@ object SearchEngine {
   }
 
   def getSearchResult[T](query: Query)(toResult: (TopDocs, IndexSearcher) => T): Option[T] = {
-    val searcher = getSearcher
-    try {
-      val result = searcher.search(query, 1000)
-      if (result.totalHits > 0) {
-        Some(toResult(result, searcher))
-      } else {
-        None
+    getSearcher match {
+      case Success(searcher) => try {
+        val result = searcher.search(query, 1000)
+        if (result.totalHits > 0) {
+          Some(toResult(result, searcher))
+        } else {
+          None
+        }
+      } finally {
+        searcher.getIndexReader.close()
       }
-    } finally {
-      searcher.getIndexReader.close()
+      case _ => None
     }
+
   }
 
-  private def getSearcher = new IndexSearcher(DirectoryReader.open(dir))
+  private def getSearcher:Try[IndexSearcher] = try {
+    Success(new IndexSearcher(DirectoryReader.open(dir)))
+  } catch {
+    case e:Throwable => Failure(e)
+  }
 
   private def createIndexWriter = {
     val indexWriterConfig = new IndexWriterConfig(version, new MPSegmentAnalyzer)

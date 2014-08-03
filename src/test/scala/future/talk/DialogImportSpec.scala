@@ -2,6 +2,7 @@ package future.talk
 
 import java.util.concurrent.TimeUnit
 
+import future.talk.model.{Talk, Dialog}
 import future.talk.util._
 import org.specs2.mutable._
 import org.junit.Assert._
@@ -13,17 +14,17 @@ import spray.testkit._
 
 import scala.concurrent.duration._
 
+import org.json4s.native.Serialization
+import MyJson4sFormat.formats
+
 class DialogImportSpec extends Specification with Specs2RouteTest with IndexerResource {
   def actorRefFactory = system
 
   implicit val timeout = RouteTestTimeout(FiniteDuration(1, TimeUnit.MINUTES))
 
-  val file = FileUtil.createTempFile(
-    """[{
-      |"id":"34A39666-D5BD-42D7-AD3D-3D548337875D",
-      |"topic":"greeting",
-      |"talks": [{"id": "B883DAB4-72DF-4E25-9DD4-86C0638BAA70","content":"Hi", "person": "Rob", "time":"2014-01-01T00:00:00"}]}]""".stripMargin
-  ).getAbsolutePath
+  val dialog1 = Dialog("greeting", Some(List[Talk](Talk("Hi", "Rob", "2014-01-01T00:00:00", Guid.newId))), Guid.newId)
+
+  val file = FileUtil.createTempFile(Serialization.write(List(dialog1))).getAbsolutePath
 
   val importFiles = s"""["$file"]"""
 

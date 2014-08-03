@@ -1,5 +1,7 @@
 package future.talk.repository
 
+import java.util.UUID
+
 import future.talk.model.{Talk, Dialog}
 import future.talk.CustomImplicitConverter._
 import org.apache.lucene.document.{Field, StringField}
@@ -10,11 +12,13 @@ import future.talk.util.Date._
 import SearchEngine._
 import scala.util.{Failure, Success, Try}
 
+case class DuplicateException(dialogId: UUID) extends Exception
+
 class DialogRepository {
 
   def create(dialog: Dialog) = {
     SearchEngine.get(dialog.id) match {
-      case Some(_) => throw new RuntimeException("duplicated dialog")
+      case Some(_) => throw DuplicateException(dialog.id)
       case _ =>
     }
     index(dialog.toDocument)

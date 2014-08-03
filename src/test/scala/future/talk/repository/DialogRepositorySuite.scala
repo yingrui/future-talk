@@ -30,7 +30,7 @@ class DialogRepositorySuite extends FunSuiteLike with Checkers {
     val dialog = Dialog("topic", Some(List(talk)), Guid.newId)
     repository.create(dialog)
 
-    intercept[RuntimeException](repository.create(dialog))
+    intercept[DuplicateException](repository.create(dialog))
   }
 
   test("should update dialog into search engine") {
