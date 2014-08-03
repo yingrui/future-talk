@@ -22,6 +22,11 @@ object SearchEngine {
     indexWriter.commit
   }
 
+  def delete(id: String): Unit = {
+    indexWriter.deleteDocuments(new Term("id", id))
+    indexWriter.commit
+  }
+
   def get(id: String): Option[Document] = {
     val query = new TermQuery(new Term("id", id))
     getSearchResult[Document](query) {
