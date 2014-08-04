@@ -20,7 +20,7 @@ import scala.concurrent.duration._
 class DialogResourceSpec extends Specification with Specs2RouteTest with DialogResource {
   def actorRefFactory = system
 
-  implicit val timeout = RouteTestTimeout(FiniteDuration(1, TimeUnit.MINUTES))
+  implicit val timeout = RouteTestTimeout(FiniteDuration(5, TimeUnit.MINUTES))
 
   val jsonTalks = """[{"content":"Hi", "person": "Rob", "time":"2014-01-01T00:00:00"}]"""
   val jsonDialog = s"""{"topic":"greeting", "talks": $jsonTalks}"""

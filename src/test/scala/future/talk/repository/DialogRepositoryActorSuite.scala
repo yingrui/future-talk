@@ -21,7 +21,7 @@ class DialogRepositoryActorSuite(_system: ActorSystem) extends TestKit(_system) 
     check(forAll(dialogGen) {
       dialog =>
         repository ! DialogCreateRequest(dialog.topic, dialog.talks.map(l => l.map(t=> TalkRequest(t.content, t.person, t.time))))
-        expectMsgPF(1 minutes) {
+        expectMsgPF(5 minutes) {
           case CREATED(actual) => verifyDialog(dialog, actual)
           case _ => false
         }
