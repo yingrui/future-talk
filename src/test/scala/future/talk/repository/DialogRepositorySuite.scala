@@ -1,11 +1,12 @@
 package future.talk.repository
 
+import future.talk.DialogGenerator
 import future.talk.util.Guid
 import org.scalatest.FunSuiteLike
 import org.scalatest.prop._
 import org.scalacheck.Prop._
 import future.talk.model.{Dialog, Talk}
-import future.talk.data.DialogGenerator._
+import DialogGenerator._
 import future.talk.CustomImplicitConverter._
 import org.junit.Assert._
 

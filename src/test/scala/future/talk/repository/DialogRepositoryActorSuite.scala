@@ -2,7 +2,8 @@ package future.talk.repository
 
 import akka.actor.{ActorSystem, Props}
 import akka.testkit.{ImplicitSender, TestKit}
-import future.talk.data.DialogGenerator._
+import future.talk.DialogGenerator
+import DialogGenerator._
 import future.talk.model.requests.{DialogCreateRequest, TalkRequest}
 import future.talk.model.{Dialog, Talk}
 import org.scalacheck.Prop._
