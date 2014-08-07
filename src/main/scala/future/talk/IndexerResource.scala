@@ -6,12 +6,10 @@ import future.talk.service.Indexer
 import future.talk.service.RequestHandler._
 import spray.http.HttpHeaders.Location
 import spray.http.StatusCodes
+import spray.httpx.Json4sSupport
 import spray.routing.{HttpService, Route}
 
-trait IndexerResource extends HttpService {
-
-  import future.talk.CustomJsonProtocol._
-  import spray.httpx.SprayJsonSupport._
+trait IndexerResource extends HttpService with Json4sSupport {
 
   val indexerRoute = {
     path("indexer") {

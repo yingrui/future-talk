@@ -25,15 +25,7 @@ object CustomImplicitConverter {
   implicit def string2Guid(guid: String) = Guid(guid)
 }
 
-object CustomJsonProtocol extends DefaultJsonProtocol {
-
-  implicit val talkFormat = jsonFormat3(TalkRequest)
-  implicit val dialogCreateRequestFormat = jsonFormat2(DialogCreateRequest)
-
-  implicit val talkDtoFormat = jsonFormat4(TalkDto)
-  implicit val dialogDtoFormat = jsonFormat3(DialogDto)
-}
-
 object MyJson4sFormat {
   implicit val formats = DefaultFormats + new GuidSerializer
+  implicit val json4sFormats = formats
 }

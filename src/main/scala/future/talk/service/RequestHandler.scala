@@ -3,6 +3,7 @@ package future.talk.service
 import java.util.concurrent.TimeUnit
 
 import akka.actor._
+import future.talk.MyJson4sFormat
 import future.talk.model.dto.ResponseMessage
 import future.talk.model.requests.RequestMessage
 import future.talk.repository._
@@ -21,7 +22,7 @@ trait PerRequest extends Actor with Json4sSupport {
   def ctx: RequestContext
   def message: RequestMessage
 
-  val json4sFormats = DefaultFormats
+  val json4sFormats = MyJson4sFormat.json4sFormats
 
   def receive = {
     case CREATED(dialog) => complete(StatusCodes.Created, "", List(Location(dialog.toUri)))

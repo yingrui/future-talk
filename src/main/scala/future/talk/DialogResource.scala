@@ -5,15 +5,13 @@ import future.talk.repository.{DuplicateException, DialogRepository}
 import future.talk.service.RequestHandler._
 import future.talk.util.MyActors
 import spray.http.StatusCodes
+import spray.httpx.Json4sSupport
 import spray.routing.{ExceptionHandler, HttpService, Route}
 import future.talk.CustomImplicitConverter._
 
-trait DialogResource extends HttpService {
+trait DialogResource extends HttpService with Json4sSupport {
 
   implicit def executionContext = actorRefFactory.dispatcher
-
-  import spray.httpx.SprayJsonSupport._
-  import CustomJsonProtocol._
 
   val resourceErrorHandler = ExceptionHandler {
     case DuplicateException(dialogId) => complete(StatusCodes.BadRequest, s"The dialog ($dialogId) already exists!")

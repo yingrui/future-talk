@@ -2,17 +2,11 @@ package future.talk
 
 import java.util.concurrent.TimeUnit
 
-import akka.actor.Props
-import future.talk.CustomJsonProtocol._
 import future.talk.model.dto.DialogDto
-import future.talk.repository.DialogRepositoryActor
-import future.talk.util.MyActors
+import future.talk.model.requests.{TalkRequest, DialogCreateRequest}
 import org.specs2.mutable._
-import spray.http.HttpCharsets.`UTF-8`
 import spray.http.HttpHeaders.Location
-import spray.http.MediaTypes.`application/json`
-import spray.http.{ContentType, HttpEntity, StatusCodes}
-import spray.json.JsonParser
+import spray.http.StatusCodes
 import spray.testkit._
 
 import scala.concurrent.duration._
@@ -20,14 +14,14 @@ import scala.concurrent.duration._
 class DialogResourceSpec extends Specification with Specs2RouteTest with DialogResource {
   def actorRefFactory = system
 
+  implicit def json4sFormats = MyJson4sFormat.json4sFormats
   implicit val timeout = RouteTestTimeout(FiniteDuration(5, TimeUnit.MINUTES))
 
-  val jsonTalks = """[{"content":"Hi", "person": "Rob", "time":"2014-01-01T00:00:00"}]"""
-  val jsonDialog = s"""{"topic":"greeting", "talks": $jsonTalks}"""
+  val dialogCreateRequest = DialogCreateRequest("greeting", Some(List(TalkRequest("Hi", "Rob", "2014-01-01T00:00:00"))))
 
   "The Dialog Resource" should {
     "return 201 and location when create dialog" in {
-      Post("/dialogs", HttpEntity(ContentType(`application/json`, `UTF-8`), jsonDialog)) ~> indexRoute ~> check {
+      Post("/dialogs", dialogCreateRequest) ~> indexRoute ~> check {
         response.header[Location] match {
           case Some(Location(uri)) => ok
           case None => failure("should return location of created resource")
@@ -37,11 +31,11 @@ class DialogResourceSpec extends Specification with Specs2RouteTest with DialogR
     }
 
     "return dialog when get by uri" in {
-      Post("/dialogs", HttpEntity(ContentType(`application/json`, `UTF-8`), jsonDialog)) ~> indexRoute ~> check {
+      Post("/dialogs", dialogCreateRequest) ~> indexRoute ~> check {
         val location = response.header[Location].get.uri
         Get(location.path.toString()) ~> indexRoute ~> check {
           response.status === StatusCodes.OK
-          val dialog = JsonParser(responseAs[String]).convertTo[DialogDto]
+          val dialog = responseAs[DialogDto]
           dialog.uri === location.toString
           dialog.topic === "greeting"
           dialog.talks match {
