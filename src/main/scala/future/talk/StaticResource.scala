@@ -7,7 +7,7 @@ import spray.httpx.marshalling.Marshaller
 
 trait StaticResource extends HttpService {
 
-  val dir = "./src/main/resources"
+  val dir = FutureTalkSettings.staticResourceDir
 
   val staticRoute = {
     pathSingleSlash {
